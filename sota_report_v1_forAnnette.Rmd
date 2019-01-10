@@ -3,7 +3,10 @@ title: "SOTA 2017-18, stats for Annette"
 date: "V1, last updated January 9, 2019"
 output:
   #pdf_document: default
-  html_document: default
+  #html_document: default
+  html_document:
+    keep_md: true
+
 always_allow_html: yes
 #classoption: landscape
 
