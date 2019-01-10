@@ -1,8 +1,7 @@
 ---
 title: "SOTA 2017-18, stats for Annette"
 date: "V1, last updated January 9, 2019"
-output:
-  rmarkdown::github_document
+output: github_document
   #pdf_document: default
   #html_document: default
   #html_document: keep_md: true
@@ -33,8 +32,8 @@ myconn <- dbConnect(odbc::odbc(),
 library(knitr)
 library(kableExtra)
 #library(shiny)
-source("I:/Emily/SOTA/draftStats/scripts/sota_schools_format.R")
-source("I:/Emily/SOTA/draftStats/scripts/network_spread.R")
+source("I:/Emily/SOTA/sota1718_stats/scripts/sota_schools_format.R")
+source("I:/Emily/SOTA/sota1718_stats/scripts/network_spread.R")
 ```
 
 ### Things to know
