@@ -1,0 +1,35 @@
+---
+title: "Exploratory Analyses"
+output: html_document
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(DBI)
+myconn <- dbConnect(odbc::odbc(), 
+                    Driver = "SQL Server",
+                    Server="artlook-production.cw6sjshf3ncd.us-east-2.rds.amazonaws.com",
+                    Database = "artlook-production",
+                    UID = "launchpadlab",
+                    PWD = "Launchpad1",
+                    Port = 1433)
+```
+
+```{r packages, include = FALSE}
+library(knitr)
+library(kableExtra)
+library(shiny)
+source("I:/Data & Impact/Analyses/State of the Arts in Chicago Public Schools/scripts/exploratory.R")
+```
+
+```{r elementary lowest metrics}
+kable(es.lowest.agg, caption = "Table 1: Lowest Rubric Elements, elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+
+```{r high school lowest metrics}
+kable(hs.lowest.agg, caption = "Table 2: Lowest Rubric Elements, high schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```

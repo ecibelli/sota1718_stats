@@ -1,0 +1,14 @@
+name: "state-of-the-arts-report"
+output_dir: "."
+navbar:
+  title: "State of the Arts in CPS"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Exploratory"
+      href: exploratory.html
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
