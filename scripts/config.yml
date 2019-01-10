@@ -1,0 +1,26 @@
+default:
+  dataconnection:
+    driver: 'SQL Server'
+    server: 'artlook-production.cw6sjshf3ncd.us-east-2.rds.amazonaws.com'
+    uid: 'launchpadlab'
+    pwd: 'Launchpad1'
+    port: 1433
+    database: 'artlook-production'
+
+local:
+  dataconnection:
+    driver: 'SQL Server'
+    server: 'artlook-production.cw6sjshf3ncd.us-east-2.rds.amazonaws.com'
+    uid: 'launchpadlab'
+    pwd: 'Launchpad1'
+    port: 1433
+    database: 'artlook-production'
+
+shinyapps:
+  dataconnection:
+    driver: 'SQLServer'
+    server: 'artlook-production.cw6sjshf3ncd.us-east-2.rds.amazonaws.com'
+    uid: 'launchpadlab'
+    pwd: 'Launchpad1'
+    port: 1433
+    database: 'artlook-production'

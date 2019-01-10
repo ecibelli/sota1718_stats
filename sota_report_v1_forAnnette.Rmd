@@ -1,0 +1,851 @@
+---
+title: "SOTA 2017-18, stats for Annette"
+date: "V1, last updated January 9, 2019"
+output:
+  #pdf_document: default
+  html_document: default
+always_allow_html: yes
+#classoption: landscape
+
+# header-includes:
+#     - \usepackage {hyperref}
+#     - \hypersetup {colorlinks = true, linkcolor = blue, urlcolor = blue}
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.align="center", tab.align = "center",
+                      fig.width = 7, fig.height = 4)
+library(DBI)
+myconn <- dbConnect(odbc::odbc(), 
+                    Driver = "SQL Server",
+                    Server="artlook-production.cw6sjshf3ncd.us-east-2.rds.amazonaws.com",
+                    Database = "artlook-production",
+                    UID = "launchpadlab",
+                    PWD = "Launchpad1",
+                    Port = 1433)
+```
+
+```{r packages, include = FALSE}
+library(knitr)
+library(kableExtra)
+#library(shiny)
+source("I:/Emily/SOTA/draftStats/scripts/sota_schools_format.R")
+source("I:/Emily/SOTA/draftStats/scripts/network_spread.R")
+```
+
+### Things to know
+
+* Key points for each section will be indicated with a <span style = "color:rgb(46, 184, 46)">"Takeways"</span> header. The basis of the prose describing the data can be built around these.
+* More detailed numbers are available upon request (e.g.  tables of what's shown in figures).
+* The status of sections will be updated as they are ready to write:
+    + "Ready to write" - self-explanatory
+    + "In progress" - writing can begin, but numbers may slightly change or a figure may be added
+    + "TBA" - analysis in progress on the back end; no content currently available
+* Table numbers are way off right now; don't worry about it.    
+
+__Known issues (for Emily):__
+
+* Partnerships - pending programs: Need to fix program types from pending partners
+* Network considerations: Should AUSL/ISP also be split by HS/ES?
+* Network outliers: How should combo schools be handled? New networks lump ES and HS together.
+
+### Table of Contents {#toc}
+* [Section I: Key Findings (TBA)](#section 1)
+* [Section II: Arts Ed Plan Goals (TBA)](#section2)
+* [Section III: District Information (all ready to write)](#section3)  
+    + [III-A: Survey Participation](#participation)
+    + [III-A: Creative Schools Certifications](#certification)
+    + [III-B: Staffing](#staffing)
+    + [III-C: Minutes of Instruction](#minutes)
+    + [III-D: Access](#access)
+    + [III-E: Disciplines and Depth](#disciplines)
+    + [III-F: Additional Arts Assets](#assets)
+* [Section IV: Partnerships (mixed)](#section4)
+    + [IV-A: Partnership distribution (mostly ready to write, one TBA analysis)](#partnerDistrib)
+    + [Iv-B: Programming (in progress)](#partnerProg)
+* [Section V: Network Analyses (TBA)](#section5)
+* [Section VI: Funding (TBA)](#section6)
+* [Section VII: Conclusion (TBA)](#section7)
+
+\newpage
+### Section I: Key Findings {#section1}
+
+[Jump back to top](#toc)
+
+<span style="color:red">TBA</span>
+
+***********
+***********
+
+### Section II: Arts Ed Plan Goals {#section2}
+
+[Jump back to top](#toc)
+
+<span style="color:red">TBA</span>
+
+***********
+***********
+
+\newpage
+### Section III: District Information {#section3}
+
+[Jump back to top](#toc)
+
+* Number of Schools: __`r numSchools1718`__
+    + Elementary Schools: __`r numES1718`__
+    + High Schools: __`r numHS1718`__
+* Number of K-12 Students (per CPS 20th day membership file): __`r enrollment_total`__
+
+
+```{r school numbers summary, include = FALSE}
+
+ kable(school_numbers, caption = "Table 1: Count of schools by Group") %>%
+kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+```
+
+***********
+
+#### III-A: Creative Schools Survey Participation {#participation}
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__  
+</span>
+<span style = "color:rgb(46, 184, 46)">
+
+* District-wide, nearly same participation level as previous year (96% vs. 97%).  
+* 100% participation from district-run schools (first time ever!)  
+* A drop in charter/contract/options participation.  
+</span>
+
+********
+
+```{r participation: district overall}
+kable(comp_rate, caption = "Table 2: Survey completion rate by year, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+comp_rate_bar +
+  ggtitle("Survey completion rate by year, district overall")
+
+```
+
+***********
+
+```{r participation: es and hs, fig.width = 10}
+kable(comp_rate_type, caption = "Table 3: Survey completion rate by year, ES and HS") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+comp_rate_type_bar +
+  ggtitle("Survey completion rate by year, ES and HS")
+
+```
+
+***********
+
+```{r participation: district, charter, other, fig.width = 14}
+kable(comp_rate_other, caption = "Table 4: Survey completion rate by year: District-run, Charter, Options") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+comp_rate_other_bar +
+  ggtitle("Survey completion rate by year: District-run, Charter, Options")
+```
+
+```{r participation: network breakdown, include = FALSE}
+datatable(comp_rate_net, caption = "Table 5: Survey completion rate by year: Network breakdown",
+          rownames = FALSE, options = list(
+  pageLength = 95
+))
+```
+
+********
+********
+
+
+\newpage
+#### III-A: Creative Schools Certifications {#certification}
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__  
+
+ * Small drop in Excelling schools (40% vs. 43% in 2016-17).  
+ * High schools are improving, drop comes in from elementary schools.  
+ * Bigger drop in charter/contract than district-run CSCs.  
+</span>
+
+********
+
+```{r csc: district overall, fig.height = 6, fig.width = 8}
+kable(final, caption = "Table 6: Creative Schools Certifications, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+final_csc_plot +
+  ggtitle("Creative Schools Certifications, district overall")
+
+```
+
+
+*****
+
+```{r csc: elementary schools and high schools, fig.height = 8, fig.width = 14}
+kable(final_type_es, caption = "Table 7: Creative Schools Certifications, elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+kable(final_type_hs, caption = "Table 8: Creative Schools Certifications, high schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+
+final_type_csc_plot +
+  ggtitle("Creative Schools Certifications, elementary and high schools")
+
+```
+
+*****
+
+```{r csc: district, charer, options, fig.height = 8, fig.width = 18}
+kable(final_districtrun, caption = "Table 9: Creative Schools Certifications, district-run schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+kable(final_charter, caption = "Table 10: Creative Schools Certifications, charter and contract schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+kable(final_options, caption = "Table 11: Creative Schools Certifications, other school types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+final_other_csc_plot +
+   ggtitle("Creative Schools Certifications, network group")
+
+```
+
+*****
+
+```{r csc: network breakdown, fig.width = 25, fig.height = 20, include = FALSE}
+datatable(final_net, 
+          caption = "Table 12: Creative Schools Certifications, network breakdown",
+          rownames = FALSE, options = list(pageLength = 15)
+)
+
+# final_net_csc_plot  + 
+#   ggtitle("Creative Schools Certifications, network breakdown")
+```
+
+#### III-B: Staffing {#staffing}
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__   
+
+ * Small drop in FTEs from previous year.  
+ * Elementary schools commonly have 1 - 2.5 FTE.High schools have a bigger range; one-third of HS have 4 or more FTE. This pattern is stable over time. 
+ * Visual arts, music continue to be most common staffing categories.  
+ * 0 FTE are slightly on the rise in elementary schools, options schools. 
+ * Overall the district has met the 1:350 staffing ratio, but not all schools have. HS are closest (88%), options are weakest (63%) on this metric.
+</span>
+
+In order to meet the 1:350 staffing ratio district-wide, CPS would have to employ `r enrollment_total` / 350 = __`r minFTEcount`__ arts instructors.
+
+******
+
+```{r staffing: district count}
+kable(staff_count, caption = "Table 13: FTE Count, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+staff_count_bar +
+  ggtitle("FTE Count, district overall")
+```
+
+Note: Data sources for this table include the Creative Schools Survey and CPS staffing files. This table, therefore, captures arts staff that existed in any of CPS' "school units" for a given year (i.e., 666 for 2017-18). Considering data from both reporting and non-reporting schools provides a more complete picture of arts staffing across the district. Due to a lower response rate on the CSS in its first year, satffing totals for 2012-13 are based only on data from CPS Office of Accountability arts staffing files as of June 15, 2013.
+
+*****
+
+```{r staffing: staffing bands, fig.width = 10}
+
+# kable(staff_labels, caption = "Table 14: FTE Bands, ES v HS") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+datatable(staff_labels, 
+          caption = "Table 14: FTE Bands, ES v HS",
+          rownames = FALSE, options = list(pageLength = 12)
+)
+
+
+staff_bands_bar + ggtitle("FTE Bands, ES v HS")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only includes those schools that completed a Creative Schools Survey
+
+*****
+
+```{r staffing: staffing by arts discipline, district overall}
+
+#kable(teachers_agg, 
+#      caption = "Table 15: Staffing by arts discipline, district overall") %>%
+#  kable_styling(bootstrap_options = c("striped", "hover", "condensed",
+#                                      "responsive", "bordered"))
+
+# disc_time_bar + ggtitle("Staffing by arts discipline by year, district overall")
+
+disc_perc_bar + ggtitle("Staffing by arts discipline, district overall")
+
+```
+
+Note: Data sources for this table include the Creative Schools Survey and CPS staffing files. This table, therefore, captures arts staff that existed in any of CPS' "school units" for a given year (i.e., 666 for 2017-18). Considering data from both reporting and non-reporting schools provides a more complete picture of arts staffing across the district.
+
+*****
+
+```{r staffing: staffing by arts discipline by ES/HS}
+
+# kable(teachers_agg_schooltype, 
+#       caption = "Table 16: Staffing by arts discipline, by school type") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+#                                       "responsive", "bordered"))
+
+datatable(teachers_agg_schooltype, 
+          caption = "Table 16: Staffing by arts discipline, by school type",
+          rownames = FALSE, options = list(pageLength = 10)
+)
+```
+
+```{r staffing by disc by ES/HS figure, fig.width = 12}
+disc_type_bar +
+  ggtitle("Staffing by arts discipline, by school type, 2017-18")
+```
+
+Note: Data sources for this table include the Creative Schools Survey and CPS staffing files. This table, therefore, captures arts staff that existed in any of CPS' "school units" for a given year (i.e., 666 for 2017-18). Considering data from both reporting and non-reporting schools provides a more complete picture of arts staffing across the district.
+
+*****
+
+```{r staffing: district overall, fig.height = 5, fig.width = 8}
+
+kable(staff, 
+      caption = "Table 17: Staffing categories, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed",
+                                      "responsive", "bordered"))
+
+staff_plot +
+  ggtitle("Staffing categories, district overall")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only includes those schools that completed a Creative Schools Survey
+
+*****
+
+```{r staffing: elementary schools, include = FALSE}
+kable(staff_type_es, 
+      caption = "Table 18: Staffing categories, elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 6650 schools for SY 2017-18) and only includes those schools that completed a Creative Schools Survey. This is why, for example, the table lists 478 elementary schools for SY 2016-17.
+
+```{r staffing: high schools,  include = FALSE}
+kable(staff_type_hs, caption = "Table 19: Staffing categories, high schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+```{r staffing: categories with 0 FTE, fig.width = 12, fig.height = 6, fig.align = "center"}
+zero_fte_type_bar + 
+  ggtitle("Staffing categories: Schools with 0 FTE by ES/HS")
+
+zero_fte_group_bar +
+  ggtitle("Staffing categories: Schools with 0 FTE by Network Group")
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only includes those schools that completed a Creative Schools Survey. This is why, for example, the table lists 153 high schools for SY 2016-17.
+
+**********
+
+```{r staffing ratio: district overall}
+kable(ratio, caption = "Table 20: Staffing ratios, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include schools that completed the Creative Schools Survey.
+
+**********
+
+```{r staffing ratio: elementary}
+kable(ratio_type_es, caption = "Table 21: Staffing ratios, elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and include Category 5 schools.
+
+```{r staffing ratio: high school}
+kable(ratio_type_hs, caption = "Table 22: Staffing ratios, high schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and include Category 5 schools.
+
+**********
+
+```{r staffing ratio: district-run}
+kable(ratio_districtrun, caption = "Table 23: Staffing ratios, district-run schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include schools that completed the Creative Schools Survey.
+
+```{r staffing ratio: charter}
+kable(ratio_charter, caption = "Table 24: Staffing ratios, charter and contract schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include schools that completed the Creative Schools Survey.
+
+```{r staffing ratio: other}
+kable(ratio_options, caption = "Table 25: Staffing ratios, other school types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include schools that completed the Creative Schools Survey.
+
+```{r staffing ratio: network breakdown, include = FALSE}
+datatable(ratio_net, caption = "Table 26: Staffing ratios, network breakdown",
+          rownames = FALSE, options = list(pageLength = 10))
+```
+
+<!--
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and include Category 5 schools.
+-->
+
+*********
+*********
+
+
+\newpage
+#### III-C: Minutes of Instruction, Elementary Schools {#minutes}
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)"> 
+__Takeaways:__
+
+* Drop in strong/excelling scores in minutes of instruction this year.  
+* Drop seen in both district-run and charter/contract schools. 
+</span>
+
+*********
+
+```{r minutes: district overall}
+kable(minutes, caption = "Table 27: Minutes of Instruction, district overall") %>%
+  kable_styling(bootstrap_options =
+                  c("striped", "hover", "condensed", "responsive", "bordered"))
+
+minutes_plot + ggtitle("Minutes of Instruction, district overall")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+*****
+
+```{r minutes: groupings, include = FALSE}
+# kable(minutes_other, caption = "Table 28: Minutes of Instruction, groupings") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+#                                       "responsive", "bordered"))
+
+datatable(minutes_other, 
+          caption = "Table 28: Minutes of instruction, network type groupings",
+          rownames = FALSE, options = list(pageLength = 10))
+
+```
+
+```{r minutes: groupings plot, fig.width = 13, fig.height = 7}
+minutes_dcco_plot + ggtitle("Minutes of Instruction by Network Group")
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+*********
+*********
+
+
+\newpage
+#### III-D: Percent Access, Elementary Schools {#access}
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__
+
+* Access across grades is also on a downward trend. 
+* 7% fewer schools achieving Excelling this year.  
+</span>
+
+
+```{r percent access: district overall, fig.height = 5}
+kable(access, caption = "Table 29: Percent Access") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+  
+access_plot + ggtitle("Percent Access, district overall")  
+  
+```
+
+*********
+
+```{r percent access: by network group, include = FALSE}
+
+# kable(access_other, caption = "Table 29: Percent Access") %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+datatable(access_other, 
+          caption = "Table 30: Percent Access, network breakdown",
+          rownames = FALSE, options = list(pageLength = 10))
+
+```
+
+```{r percent access: by network group plot,  fig.width = 12, fig.height = 5}
+
+access_dcco_plot + ggtitle("Percent Access by Network Group")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+*********
+*********
+
+
+\newpage
+#### III-E: Disciplines & Depth, High Schools {#disciplines}
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__
+
+* Disciplines & Depth upswing: 5% more schools receiving a Strong rating than 2016-17.  
+* Improvement driven largely by district-run schools. </span>
+
+```{r disciplines: district overall, fig.height = 5}
+
+kable(disciplines, caption = "Table 30: HS Disciplines and Depth, district overall") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed",
+                                      "responsive", "bordered"))
+
+disciplines_plot + ggtitle("HS Disciplines and Depth, district overall")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+*****
+
+```{r disciplines: district-run}
+kable(disciplines_districtrun, caption = "Table 31: HS Disciplines and Depth, district-run") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r disciplines: charter}
+kable(disciplines_charter, caption = "Table 32: HS Disciplines and Depth, charter and contract schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r disciplines: options}
+kable(disciplines_options, caption = "Table 33: HS Disciplines and Depth, options/other school types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r disciplines: plot by network group, fig.width = 15, fig.height = 7}
+
+disciplines_dcco_plot + ggtitle("HS Disciplines and Depth by network group")
+
+```
+
+*****
+*****
+
+
+\newpage
+#### III-F: Additional Arts Assets {#assets}
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__
+
+* Assets mostly stable across time.  
+* Some improvement/recovery in professional development, esp. in HS.  
+* Something of a downward trend in Budget over the years. </span>
+
+```{r asset plots, all schools, fig.width = 12, fig.height = 4}
+
+asset_all_bar +
+  ggtitle("Percentage of schools with additional arts assets, district-wide")
+
+```
+
+```{r asset plots, es v hs, fig.width = 12, fig.height = 8}
+
+asset_es_hs_bar +
+  ggtitle("Percentage of schools with additional arts assets, ES v. HS")
+
+```
+
+******
+<!--
+
+##### Budget
+
+```{r assets: budget, all schools}
+kable(budget, 
+      caption = "Table 34: Does the school have a dedicated budget for the arts? All schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: budget, elementary}
+kable(budget_es, caption = "Table 35: Does the school have a dedicated budget for the arts? Elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: budget, high school}
+kable(budget_hs, caption = "Table 36: Does the school have a dedicated budget for the arts? High schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+
+******
+
+##### Arts Integration
+
+```{r assets: artsint, all schools}
+kable(artsint, caption = "Table 37: Does the use arts integration strategies? All schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: artsint, elementary}
+kable(artsint_es, caption = "Table 38: Does the use arts integration strategies? Elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: artsint, high schools}
+kable(artsint_hs, caption = "Table 39: Does the use arts integration strategies? High schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+******
+
+##### Professional Development
+
+```{r assets: profdev, all schools}
+kable(profdev, caption = "Table 40: Do teachers at the school have access to arts-specific professional development? All schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: profdev, elementary}
+kable(profdev_es, caption = "Table 41: Do teachers at the school have access to arts-specific professional development? Elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: profdev, high schools}
+kable(profdev_hs, caption = "Table 42: Do teachers at the school have access to arts-specific professional development? High schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+******
+
+##### Partnerships
+
+```{r assets: part, all schools}
+kable(part, caption = "Table 43: Does the school have at least one partnership with an external arts partner? All schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: part, elementary}
+kable(part_es, caption = "Table 44: Does the school have at least one partnership with an external arts partner? Elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: part, high schools}
+kable(part_hs, caption = "Table 45: Does the school have at least one partnership with an external arts partner? High schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+******
+
+##### Community Engagement
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: engagement, all schools}
+kable(eng, caption = "Table 46: Does the school have opportunities for parent and community engagement in the arts? All schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: engagement, elementary}
+kable(eng_es, caption = "Table 47: Does the school have opportunities for parent and community engagement in the arts? Elementary schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+```{r assets: engagement, high schools}
+kable(eng_hs, caption = "Table 48: Does the school have opportunities for parent and community engagement in the arts? High schools") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+-->
+
+********
+********
+********
+
+\newpage
+### Section IV: Partnerships {#section4}
+
+[Jump back to top](#toc)
+
+#### IV-A: Partnership distribution {#partnerDistrib}
+
+
+[Jump back to top](#toc)
+
+<span style = "color:rgb(46, 184, 46)">
+__Takeaways:__
+
+* Small bump in number of partners over last year.  
+* Small increase in average # of partners per school.  
+* Program types: Field trips, resources continue to grow; other categories (besides "other") largely stable.  <span style = "color:red">Numbers to be updated slightly.</span>
+* Partner disciplines: music, visual arts most common; some growth in literary arts.
+</span>
+
+```{r partnerships: count}
+
+kable(partner_count, 
+      caption = "Table 49: Partner Count", row.names = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed",
+                                      "responsive", "bordered"))
+
+partner_count_bar + ggtitle("Partner count, district-wide")
+```
+
+*****
+
+```{r partnerships: average per school}
+kable(partner_mean, caption = "Table 50: Average Number of Arts Partners per School", row.names = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+
+partner_mean_bar + ggtitle("Average Number of Arts Partners per School")
+
+```
+
+Note: These data are calculated from the "condensed" rubrics (i.e., 650 schools for SY 2017-18) and only include those schools that responded to the survey.
+
+*****
+
+```{r partnerships: partners per school, network breakdown, include = FALSE}
+datatable(partner_networks, caption = "Table 51: Active arts partners per school, network breakdown",
+          rownames = FALSE, options = list(
+  pageLength = 10
+))
+```
+
+```{r partnerships: network breakdown plot, include = FALSE, fig.height = 15, fig.width = 18}
+
+partner_net_bar + ggtitle("Active arts partners per school, network breakdown")
+
+```
+
+*****
+
+```{r partnerships: partner disciplines by year, fig.height = 6, fig.width = 8}
+
+# kable(disc_agg, 
+# caption = "Table 53: Arts partner disciplines by year", row.names = FALSE) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", 
+#   "responsive", "bordered"))
+
+partner_disc_bar + ggtitle("Arts partner disciplines")
+  
+```
+
+Note: partnership organizations may identify with more than one arts discipline, so total disciplines may add up to more than 100%.
+
+#### Some sort of broader partner analysis will go here (TBA)
+
+<span style = "color:red">TBA. This section will include:
+
+ * Geographic trends, or
+ * Partners in 17-18 meeting requests from 16-17, or
+ * Geographic distribution of programmign types (to go in IV-B)
+</span> 
+ 
+#### IV-B: Partnership programming {#partnerProg}  
+ 
+
+[Jump back to top](#toc) 
+ 
+```{r partnerships: program type count, fig.height = 6, fig.width = 8}
+# kable(program_types, caption = "Table 52: Arts program types", row.names = FALSE) %>%
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive", "bordered"))
+
+program_types_bar + ggtitle("Arts program types")
+
+```
+ 
+\newpage
+### Section 5: Network Analyses {#section5}
+
+[Jump back to top](#toc)
+
+<span style = "color:red">TBA</span>
+
+```{r network_spread_intro, fig.width = 14, fig.height = 12}
+
+#net_csc_bar
+
+```
+
+\newpage
+### Section 6: Funding {#section6}
+
+[Jump back to top](#toc)
+
+<span style = "color:red">TBA</span>
+
+\newpage
+### Section 7: Conclusion {#section7}
+
+[Jump back to top](#toc)
+
+<span style = "color:red">TBA</span>
