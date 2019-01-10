@@ -1,10 +1,11 @@
 ---
 title: "SOTA 2017-18, stats for Annette"
 date: "V1, last updated January 9, 2019"
-output: github_document
+output: 
   #pdf_document: default
   #html_document: default
-  #html_document: keep_md: true
+  html_document: 
+    keep_md: true
 
 always_allow_html: yes
 #classoption: landscape
@@ -31,7 +32,7 @@ myconn <- dbConnect(odbc::odbc(),
 ```{r packages, include = FALSE}
 library(knitr)
 library(kableExtra)
-#library(shiny)
+library(shiny)
 source("I:/Emily/SOTA/sota1718_stats/scripts/sota_schools_format.R")
 source("I:/Emily/SOTA/sota1718_stats/scripts/network_spread.R")
 ```
@@ -276,8 +277,7 @@ Note: Data sources for this table include the Creative Schools Survey and CPS st
 
 datatable(staff_labels, 
           caption = "Table 14: FTE Bands, ES v HS",
-          rownames = FALSE, options = list(pageLength = 12)
-)
+          rownames = FALSE, options = list(pageLength = 12))
 
 
 staff_bands_bar + ggtitle("FTE Bands, ES v HS")

@@ -21,7 +21,7 @@ library(ggmap)
 
 ### Workspace and data setup -------------------------------------------
 
-wd = "I:/Emily/SOTA/draftStats"
+wd = "I:/Emily/SOTA/sota1718_stats"
 setwd(wd)
 
 # I. Setup and sourcing

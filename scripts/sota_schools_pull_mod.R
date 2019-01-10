@@ -2,7 +2,7 @@
 # (1) capture updated 17-18 staffing data, and
 # (2) handle a miscategorization of 2012-13 HS/ES data.
 
-source("I:/Emily/SOTA/draftStats/scripts/db_connection.R")
+source("I:/Emily/SOTA/sota1718_stats/scripts/db_connection.R")
 
 # Setup and run database connection
 library(tidyverse)
